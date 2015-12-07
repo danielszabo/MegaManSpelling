@@ -1,0 +1,112 @@
+var Greeter = (function () {
+    function Greeter(element) {
+        this.element = element;
+        this.element.innerHTML += "The time is: ";
+        this.span = document.createElement('span');
+        this.element.appendChild(this.span);
+        this.span.innerText = new Date().toUTCString();
+    }
+    Greeter.prototype.start = function () {
+        var _this = this;
+        this.timerToken = setInterval(function () { return _this.span.innerHTML = new Date().toUTCString(); }, 500);
+    };
+    Greeter.prototype.stop = function () {
+        clearTimeout(this.timerToken);
+    };
+    return Greeter;
+})();
+var Game = (function () {
+    function Game() {
+    }
+    Game.prototype.start = function () {
+        var goodGuy = new BO.Character();
+        goodGuy.currentHealth = 10;
+        goodGuy.maxHealth = 10;
+        goodGuy.name = "MegaMan";
+        goodGuy.imageUrl = "http://operationrainfall.com/wp-content/uploads/2013/11/Top-10-Turbo-Man.jpg";
+        var goodGuyUi = new UI.CharacterUI();
+        document.body.appendChild(goodGuyUi.render(goodGuy));
+    };
+    return Game;
+})();
+window.onload = function () {
+    var el = document.getElementById('content');
+    var greeter = new Greeter(el);
+    greeter.start();
+};
+var BO;
+(function (BO) {
+    var Arena = (function () {
+        function Arena() {
+        }
+        Arena.prototype.startBattle = function () {
+            return this;
+        };
+        Arena.prototype.setGoodGuy = function (goodGuy) {
+            this.GoodGuy = goodGuy;
+        };
+        Arena.prototype.setBadGuy = function (badGuy) {
+            this.BadGuy = badGuy;
+        };
+        return Arena;
+    })();
+    BO.Arena = Arena;
+})(BO || (BO = {}));
+var BO;
+(function (BO) {
+    var Character = (function () {
+        function Character() {
+        }
+        return Character;
+    })();
+    BO.Character = Character;
+})(BO || (BO = {}));
+var UI;
+(function (UI) {
+    var CharacterUI = (function () {
+        function CharacterUI() {
+            this.template = "\n      <div>\n        <div><img src=\"{{imageUrl}}\"/></div>\n        <div>{{name}}</div>\n        {{#renderCharacterHealth currentHealth maxHealth}}\n      </div>\n";
+        }
+        CharacterUI.prototype.render = function (character) {
+            return HBRender.renderTemplate(this.template, character);
+        };
+        return CharacterUI;
+    })();
+    UI.CharacterUI = CharacterUI;
+})(UI || (UI = {}));
+/// <reference path="../../scripts/typings/handlebars/handlebars.d.ts" />
+/// <reference path="../../scripts/typings/jquery/jquery.d.ts" />
+var HBRender = (function () {
+    function HBRender() {
+    }
+    HBRender.init = function () {
+        Handlebars.registerHelper('renderCharacterHealth', function (currentHealth, maxHealth) {
+            var strHtml = "<div>";
+            for (var i = 0; i < maxHealth; i++) {
+                if (i <= currentHealth) {
+                    strHtml += "<div style='healthyHealth'></div>";
+                }
+                else {
+                    strHtml += "<div style='unhealthyHealth'></div>";
+                }
+            }
+            strHtml += "</div>";
+            return new Handlebars.SafeString(strHtml);
+        });
+    };
+    HBRender.renderTemplate = function (sourceHtml, viewModel) {
+        //var source   = $("#entry-template").html();
+        //var template = Handlebars.compile(source);
+        //var context  = { title: "My New Post", body: "This is my first post!" };
+        //var html     = template(context);
+        var source = sourceHtml;
+        var template = Handlebars.compile(source);
+        var context = viewModel;
+        var html = template(context).trim();
+        var div = document.createElement("div");
+        $(div).html(html);
+        return div.firstElementChild;
+    };
+    return HBRender;
+})();
+//# sourceMappingURL=MegaManSpelling.map

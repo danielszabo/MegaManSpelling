@@ -1,0 +1,6 @@
+C:\_SOURCE\MegaManSpelling\MegaManSpelling\obj\Debug\MegaManSpelling.csprojResolveAssemblyReference.cache
+C:\_SOURCE\MegaManSpelling\MegaManSpelling\bin\MegaManSpelling.dll.config
+C:\_SOURCE\MegaManSpelling\MegaManSpelling\bin\MegaManSpelling.dll
+C:\_SOURCE\MegaManSpelling\MegaManSpelling\bin\MegaManSpelling.pdb
+C:\_SOURCE\MegaManSpelling\MegaManSpelling\obj\Debug\MegaManSpelling.dll
+C:\_SOURCE\MegaManSpelling\MegaManSpelling\obj\Debug\MegaManSpelling.pdb

@@ -1,0 +1,136 @@
+﻿/*@import url(https://fonts.googleapis.com/css?family=Covered+By+Your+Grace);*/
+
+body {
+    width: 1000px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #EFEFFE;
+}
+#content {
+  margin: 0 auto;
+    width: 800px;
+    background-color: #FFF;
+    outline: 1px solid #000;
+    padding-bottom: 20px;
+}
+
+span {
+    font-style: italic;
+}
+
+.ArenaTable {
+  width: 100%;
+}
+  .ArenaTable td:first-child {
+    text-align:left;
+  }
+  .ArenaTable td:last-child {
+    text-align:right;
+  }
+
+#BtnSubmitButton {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f85032+0,f16f5c+50,f6290c+51,f02f17+71,e73827+100;Red+Gloss+%231 */
+background: #f85032; /* Old browsers */
+background: -moz-linear-gradient(top,  #f85032 0%, #f16f5c 50%, #f6290c 51%, #f02f17 71%, #e73827 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #f85032 0%,#f16f5c 50%,#f6290c 51%,#f02f17 71%,#e73827 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #f85032 0%,#f16f5c 50%,#f6290c 51%,#f02f17 71%,#e73827 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f85032', endColorstr='#e73827',GradientType=0 ); /* IE6-9 */
+color: #FFF;
+}
+#BtnSubmitButton:hover{
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f3c5bd+0,e86c57+50,ea2803+51,ff6600+75,c72200+100;Red+Gloss */
+background: #f3c5bd; /* Old browsers */
+background: -moz-linear-gradient(top,  #f3c5bd 0%, #e86c57 50%, #ea2803 51%, #ff6600 75%, #c72200 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #f3c5bd 0%,#e86c57 50%,#ea2803 51%,#ff6600 75%,#c72200 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #f3c5bd 0%,#e86c57 50%,#ea2803 51%,#ff6600 75%,#c72200 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3c5bd', endColorstr='#c72200',GradientType=0 ); /* IE6-9 */
+
+}
+
+.Roster {
+  margin: 0 auto;
+}
+  .RosterPortrait {
+    background-size    : contain;
+    background-position: center;
+    background-repeat  : no-repeat;
+    display            : inline-block;
+    height             : 170px;
+    width              : 170px;
+    margin             : 10px;
+    outline            : 1px solid #000;
+    position           : relative;
+  }
+
+    .RosterPortrait .RosterCharacterName,
+    .RosterPortrait .RosterCharacterDifficulty {
+      font-size       : .75em;
+      position        : absolute;
+      bottom          : 0;
+      right           : 0;
+      background-color: #FFF;
+    }
+    .RosterPortrait .RosterCharacterDifficulty {
+      left            : 0;
+      right           : unset;
+      background-color: green;
+      padding         : 2px;
+      outline         : 3px double green;
+    }
+
+
+
+.character {
+  position: relative;
+}
+.characterName{
+  font-family: 'Covered By Your Grace', cursive;
+  font-size: 2em;
+}
+.characterPic{
+  height           : 300px;
+  width            : 360px;
+  background-size  : contain;
+  background-repeat: no-repeat;
+  display          : inline-block;
+}
+
+.characterHealthBlock {
+  height : 20px;
+  width  : 20px;
+  display: inline-block;
+  border : 3px double #FFF;
+  margin : 3px;
+  outline : 1px solid #000;
+}
+
+.characterHealthBlock.full {
+  background-color: green;
+}
+.characterHealthBlock.empty {
+   background-color: #fff;
+}
+
+.characterIsDeadoverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url("http://www.clipartbest.com/cliparts/di7/jA7/di7jA7n6T.gif");
+  background-repeat: no-repeat;
+  background-size  : contain;
+  height: 300px;
+  width : 360px;
+}
+
+.currentWordArea{
+  font-size: 1.5em;
+}
+
+.textEntryArea {
+  text-align: center;
+}
+
+  .textEntryArea input{
+    font-size: 2em;
+    font-family: 'Segoe UI', sans-serif;
+  }
