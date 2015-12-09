@@ -30,7 +30,7 @@ class GameLauncher{
     var goodGuy      = new BO.Character("MegaMan", "Images/MegaMan.png", 10, 10, 1);
     var badGuy       = roster.BadGuys[gameSettings.CurrentLevel];
     var currentWord  = new BO.WordSelector().chooseRandomWordFromBank(
-      new BO.WordBank().Level1Words);
+      new BO.WordBank().Level2Words);
     var game         = new BO.Game(gameSettings, voice, currentWord, goodGuy, badGuy);
 
     document.getElementById("content").appendChild(game.UI.el);
@@ -38,6 +38,9 @@ class GameLauncher{
 
     var roster = new BO.Roster();
     document.body.appendChild(roster.UI.el);
+
+    
+    window["game"] = game;
   }
 }
 

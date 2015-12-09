@@ -25,6 +25,7 @@ declare module BO {
 }
 declare module BO {
     class Game {
+        HasUsedCurrentWordHint: boolean;
         CurrentWord: IWordBankEntry;
         Settings: GameSettings;
         GameVoice: Voice;
@@ -35,6 +36,10 @@ declare module BO {
         start(): Game;
         cycleToNextWord(): void;
         cycleToNextBadGuy(): void;
+        wordMatchesCurrentWord(s: string): boolean;
+        increaseCharacterHealth(char: Character, n: number): void;
+        reduceCharacterHealth(char: Character, n: number): void;
+        reduceGoodGuyHealth: any;
         speakCurrentWordAndPhrase(): void;
         speak(s: string): void;
         speakCurrentBadGuyIntro(): void;
@@ -45,6 +50,7 @@ declare module BO {
 declare module BO {
     class GameSettings {
         CurrentLevel: number;
+        WordDifficulty: number;
         PlayerName: string;
         HintDuration: number;
     }
@@ -71,7 +77,7 @@ declare module BO {
     class WordBank {
         constructor();
         Level1Words: Array<IWordBankEntry>;
-        Level2Words: Array<string>;
+        Level2Words: Array<IWordBankEntry>;
         Level3Words: Array<string>;
     }
     class WordSelector {
@@ -94,18 +100,19 @@ declare module UI {
         el: HTMLElement;
         tdGoodGuy: HTMLTableCellElement;
         tdBadGuy: HTMLTableCellElement;
-        divCurrentWord: HTMLDivElement;
-        spanCurrentWord: HTMLSpanElement;
+        divModalWindow: HTMLDivElement;
+        divModalContent: HTMLDivElement;
         btnShowCurrentWord: HTMLInputElement;
         btnSayCurrentWord: HTMLInputElement;
         btnSubmitAnswer: HTMLInputElement;
         txtUserEntry: HTMLInputElement;
         template: string;
+        templateWordHintAndUsage: string;
         constructor(arena: BO.Game);
         render(game: BO.Game): GameUI;
-        renderGoodGuy(character: BO.Character): GameUI;
-        renderBadGuy(character: BO.Character): GameUI;
-        renderCurrentWord(word: BO.IWordBankEntry): void;
+        renderCharacter(character: BO.Character, td: HTMLTableCellElement): GameUI;
+        renderModalContent(hbTemplate: string, data: any): void;
+        showModalWindow(b: boolean): void;
         showCurrentWord(b: boolean): void;
         showShowCurrentWordButton(b: boolean): void;
         resetForm(): void;

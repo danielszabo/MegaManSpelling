@@ -1,5 +1,5 @@
 ﻿module BO{
-  
+
   export class Character{
     public name          : string;
     public imageUrl      : string;

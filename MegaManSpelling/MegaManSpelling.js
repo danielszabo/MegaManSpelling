@@ -24,11 +24,12 @@ var GameLauncher = (function () {
         var roster = new BO.Roster();
         var goodGuy = new BO.Character("MegaMan", "Images/MegaMan.png", 10, 10, 1);
         var badGuy = roster.BadGuys[gameSettings.CurrentLevel];
-        var currentWord = new BO.WordSelector().chooseRandomWordFromBank(new BO.WordBank().Level1Words);
+        var currentWord = new BO.WordSelector().chooseRandomWordFromBank(new BO.WordBank().Level2Words);
         var game = new BO.Game(gameSettings, voice, currentWord, goodGuy, badGuy);
         document.getElementById("content").appendChild(game.UI.el);
         var roster = new BO.Roster();
         document.body.appendChild(roster.UI.el);
+        window["game"] = game;
     };
     return GameLauncher;
 })();
@@ -59,6 +60,7 @@ var BO;
 (function (BO) {
     var Game = (function () {
         function Game(gameSettings, gameVoice, currentWord, goodGuy, badGuy) {
+            this.HasUsedCurrentWordHint = false;
             this.Settings = gameSettings;
             this.GameVoice = gameVoice;
             this.CurrentWord = currentWord;
@@ -85,6 +87,23 @@ var BO;
             var roster = new BO.Roster();
             this.Settings.CurrentLevel++;
             this.BadGuy = roster.BadGuys[this.Settings.CurrentLevel];
+        };
+        Game.prototype.wordMatchesCurrentWord = function (s) {
+            return s === this.CurrentWord.word;
+        };
+        Game.prototype.increaseCharacterHealth = function (char, n) {
+            char.currentHealth += n;
+            // Don't let the character's health exceed it's max health
+            if (char.currentHealth > char.maxHealth) {
+                char.currentHealth = char.maxHealth;
+            }
+        };
+        Game.prototype.reduceCharacterHealth = function (char, n) {
+            char.currentHealth -= n;
+            // Don't let the character's health counter fall below zero
+            if (char.currentHealth < 0) {
+                char.currentHealth = 0;
+            }
         };
         Game.prototype.speakCurrentWordAndPhrase = function () {
             var voice = this.GameVoice;
@@ -123,9 +142,10 @@ var BO;
 (function (BO) {
     var GameSettings = (function () {
         function GameSettings() {
-            this.CurrentLevel = 7;
+            this.CurrentLevel = 0;
+            this.WordDifficulty = 2; // [1|2|3] Determines which difficulty word bank to use
             this.PlayerName = "Kaleb";
-            this.HintDuration = 2000;
+            this.HintDuration = 6000;
         }
         return GameSettings;
     })();
@@ -141,9 +161,10 @@ var BO;
                 new BO.Character("Pencil Man", "Images/PencilMan.png", 5, 5, 3),
                 new BO.Character("Doctor Porcupine", "Images/PorcupineMan.png", 6, 6, 4),
                 new BO.Character("Blade Man", "Images/BladeMan.png", 7, 7, 5),
-                new BO.Character("Tornado Man", "Images/TornadoMan.png", 8, 8, 6),
-                new BO.Character("Fire Man", "Images/FireMan.png", 9, 9, 7),
-                new BO.Character("Dragon Man", "Images/DragonMan.png", 10, 10, 8)];
+                new BO.Character("Alligator Man", "Images/AlligatorMan.png", 8, 8, 6),
+                new BO.Character("Tornado Man", "Images/TornadoMan.png", 9, 9, 7),
+                new BO.Character("Fire Man", "Images/FireMan.png", 10, 10, 8),
+                new BO.Character("Dragon Man", "Images/DragonMan.png", 20, 20, 9)];
             this.UI = new UI.RosterUI(this);
         }
         return Roster;
@@ -183,8 +204,8 @@ var BO;
                 { word: "are", accepts: ["are"], usage: "The children are happy" },
                 { word: "butter", accepts: ["butter"], usage: "I would like butter on my toast" },
                 { word: "by", accepts: ["by", "bye", "buy"], usage: "He rode his bike by the store" },
-                { word: "call", accepts: ["call"], usage: "The child would like to make a call on the telephone" },
-                { word: "come", accepts: ["come"], usage: "The mother asked the child to come here" },
+                { word: "call", accepts: ["call"], usage: "Can I call you on the telephone" },
+                { word: "come", accepts: ["come"], usage: "The mother asked the boy to come here" },
                 { word: "fix", accepts: ["fix"], usage: "The child wanted to fix the toy" },
                 { word: "he", accepts: ["he"], usage: "The boy asked if he could play with the toy" },
                 { word: "here", accepts: ["here", "hear"], usage: "Can you come over here please" },
@@ -199,52 +220,52 @@ var BO;
                 { word: "was", accepts: ["was"], usage: "The boy was at the store with his mother" },
                 { word: "where", accepts: ["where"], usage: "The boy wanted to know where his mother was going" },
                 { word: "with", accepts: ["with"], usage: "The boy wanted to know if he could go with his mother" },
-                { word: "you", accepts: ["you"], usage: "The boy told his mothre I love you!" }];
+                { word: "you", accepts: ["you"], usage: "The boy told his mother I love you!" }];
             this.Level2Words = [
-                "animal",
-                "angry",
-                "apple",
-                "baby",
-                "banana",
-                "below",
-                "bird",
-                "blue",
-                "easy",
-                "curious",
-                "corn",
-                "hide",
-                "funny",
-                "green",
-                "inside",
-                "lion",
-                "look",
-                "mash",
-                "mean",
-                "down",
-                "open",
-                "outside",
-                "over",
-                "pancake",
-                "paperclip",
-                "sleep",
-                "sleepy",
-                "sheesh",
-                "snack",
-                "shock",
-                "show",
-                "star",
-                "stem",
-                "stole",
-                "stop",
-                "sweet",
-                "swim",
-                "that",
-                "there",
-                "their",
-                "they",
-                "those",
-                "wash",
-                "yellow"];
+                { word: "animal", accepts: ["animal"], usage: "A deer is an animal." },
+                { word: "angry", accepts: ["angry"], usage: "When Kaleb doesn't listen, Mommy gets angry." },
+                { word: "apple", accepts: ["apple"], usage: "Kaleb likes to snack on an apple." },
+                { word: "baby", accepts: ["baby"], usage: "Zoe loves her baby dolls." },
+                { word: "banana", accepts: ["banana"], usage: "Do you want a banana?" },
+                { word: "below", accepts: ["below"], usage: "The minions wait below the banana tree." },
+                { word: "bird", accepts: ["bir"], usage: "A bird sits in the banana tree." },
+                { word: "blue", accepts: ["blue"], usage: "A blue bird sits in the banana tree." },
+                { word: "easy", accepts: ["easy"], usage: "Spelling is almost too easy for Kaleb." },
+                { word: "curious", accepts: ["curious"], usage: "George was good little and always very curious." },
+                { word: "corn", accepts: ["corn"], usage: "Corn on the cobb is tasty." },
+                { word: "hide", accepts: ["hide"], usage: "Hide and seek is a fun game." },
+                { word: "funny", accepts: ["funny"], usage: "The minions are really funny little yellow guys." },
+                { word: "green", accepts: ["gree"], usage: "Kaleb turns green when he eats food that he does not like." },
+                { word: "inside", accepts: ["inside"], usage: "Kaleb has to come inside when it gets cold outside." },
+                { word: "lion", accepts: ["lion"], usage: "Kalebs mom is a lion in the bedroom." },
+                { word: "look", accepts: ["look"], usage: "Kaleb put on the costume and said look at me!" },
+                { word: "mash", accepts: ["mash"], usage: "Mommy likes to mash potatos." },
+                { word: "mean", accepts: ["mean"], usage: "Zoe gets mean when she sees Kaleb with a helicopter." },
+                { word: "down", accepts: ["down"], usage: "Mommy told Kaleb to get down off the table." },
+                { word: "open", accepts: ["open"], usage: "Please open the door" },
+                { word: "outside", accepts: ["outside"], usage: "Outside the window George saw a bunch of little ducks." },
+                { word: "over", accepts: ["over"], usage: "Dorothy flew over the rainbow." },
+                { word: "pancakes", accepts: ["pancakes"], usage: "Kaleb likes to put syrup on his pancakes." },
+                { word: "paperclip", accepts: ["paperclip"], usage: "Mommy makes paper stick together with a paperclip." },
+                { word: "sleep", accepts: ["sleep"], usage: "Kaleb needs to go to sleep." },
+                { word: "sleepy", accepts: ["sleepy"], usage: "Kaleb gets sleepy when he stays up to late." },
+                { word: "sheesh", accepts: ["shees"], usage: "All right all right SHEESH!" },
+                { word: "snack", accepts: ["snack"], usage: "Kaleb likes to eat a snack before bed." },
+                { word: "shock", accepts: ["shock"], usage: "You'll get a shock if you play with electricity." },
+                { word: "show", accepts: ["show"], usage: "Kaleb likes to watch a show before dinner." },
+                { word: "star", accepts: ["star"], usage: "There was a bright star in the sky." },
+                { word: "stem", accepts: ["stem"], usage: "Mommy held the rose by the stem while smelling it." },
+                { word: "stole", accepts: ["stole"], usage: "Kaleb stole the show with his smile." },
+                { word: "stop", accepts: ["stop"], usage: "When Zoe screams at daddy in the backtub Daddy says STOP." },
+                { word: "sweet", accepts: ["sweet"], usage: "Kaleb can be sweet when he wants to." },
+                { word: "swim", accepts: ["swim"], usage: "Kaleb loves to swim when its hot." },
+                { word: "that", accepts: ["that"], usage: "Kaleb saw something he wanted and said I want that!" },
+                { word: "there", accepts: ["ther"], usage: "Let's go over there." },
+                { word: "their", accepts: ["their"], usage: "Their kids were stomping around." },
+                { word: "they", accepts: ["they"], usage: "They did not know their feet were so loud on the floor." },
+                { word: "those", accepts: ["those"], usage: "Those kids did not know how loud they were being." },
+                { word: "wash", accepts: ["wash"], usage: "Mommy always makes us wash our hands." },
+                { word: "yellow", accepts: ["yell"], usage: "George was friends with the man in the yellow hat." }];
             this.Level3Words = [
                 "above",
                 "batch",
@@ -327,7 +348,8 @@ var UI;
 (function (UI) {
     var GameUI = (function () {
         function GameUI(arena) {
-            this.template = "\n<div>\n  <table class='ArenaTable'>\n    <tbody>\n      <tr>\n        <td id=\"GoodGuyCell\"></td>\n        <td>\n        </td>\n        <td id=\"BadGuyCell\"></td>\n      </tr>\n    </tbody>\n  </table>\n\n  <br/>\n  <div class='textEntryArea'>\n    <div class=\"currentWordArea\" id=\"DivCurrentWordArea\" style='display:none'>\n      <span>Word</span>: <b><span id=\"CurrentWord\">{{CurrentWord.word}}</span></b>\n    </div>\n    <form>\n      <input id=\"BtnSayCurrentWord\" type=\"button\" value=\"Repeat Word\" /><br>\n      <input id=\"TextEntryInput\" type=\"text\" placeholder=\"Type your answer here\" />\n      <input id=\"BtnShowCurrentWord\" type=\"button\" value=\"Show Word\" />\n      <br><br>\n      <input id=\"BtnSubmitButton\" type=\"button\" value=\"FIRE\" />\n    </form>\n  </div>\n</div>\n";
+            this.template = "\n<div style=\"position: relative\">\n  <div id=\"ModalWindow\" class='ModalContainer'>\n    <div class='ModalBG'></div>\n    <div id=\"ModalContent\" class='ModalContent'></div>\n  </div>  \n  \n  <table class='ArenaTable'>\n    <tbody>\n      <tr>\n        <td id=\"GoodGuyCell\"></td>\n        <td>\n        </td>\n        <td id=\"BadGuyCell\"></td>\n      </tr>\n    </tbody>\n  </table>\n\n  <br/>\n  <div class='textEntryArea'>\n    <form>\n      <input id=\"BtnSayCurrentWord\" type=\"button\" value=\"Repeat Word\" /><br>\n      <input id=\"BtnShowCurrentWord\" type=\"button\" value=\"Show Hint\" /><br>\n      <input id=\"TextEntryInput\" type=\"text\" placeholder=\"Type your answer here\" />\n      <br><br>\n      <input id=\"BtnSubmitButton\" type=\"button\" value=\"FIRE\" />\n    </form>\n  </div>\n</div>\n";
+            this.templateWordHintAndUsage = "\n<div>\n  <div class=\"currentWordArea\" id=\"DivCurrentWordArea\">\n    <span>Word</span>: <b><span id=\"CurrentWord\">{{CurrentWord.word}}</span></b><br>\n    Sentence: <span id=\"CurrentWordSentence\">{{CurrentWord.usage}}</span><br>\n  </div>\n</div>\n";
             this.game = arena;
             this.render(arena);
             this.wireup();
@@ -337,37 +359,43 @@ var UI;
             this.el = HBRender.renderTemplate(this.template, game);
             this.tdGoodGuy = this.el.querySelector("#GoodGuyCell");
             this.tdBadGuy = this.el.querySelector("#BadGuyCell");
-            this.divCurrentWord = this.el.querySelector("#DivCurrentWordArea");
-            this.spanCurrentWord = this.el.querySelector("#CurrentWord");
+            this.divModalWindow = this.el.querySelector("#ModalWindow");
+            this.divModalContent = this.el.querySelector("#ModalContent");
             this.btnShowCurrentWord = this.el.querySelector("#BtnShowCurrentWord");
             this.btnSayCurrentWord = this.el.querySelector("#BtnSayCurrentWord");
             this.btnSubmitAnswer = this.el.querySelector("#BtnSubmitButton");
             this.txtUserEntry = this.el.querySelector("#TextEntryInput");
-            this.renderGoodGuy(game.GoodGuy);
-            this.renderBadGuy(game.BadGuy);
+            this.renderCharacter(game.GoodGuy, this.tdGoodGuy);
+            this.renderCharacter(game.BadGuy, this.tdBadGuy);
             this.resetForm();
             return this;
         };
-        GameUI.prototype.renderGoodGuy = function (character) {
-            this.tdGoodGuy.innerHTML = "";
-            this.tdGoodGuy.appendChild(character.UI.render());
+        GameUI.prototype.renderCharacter = function (character, td) {
+            td.innerHTML = "";
+            td.appendChild(character.UI.render());
             return this;
         };
-        GameUI.prototype.renderBadGuy = function (character) {
-            this.tdBadGuy.innerHTML = "";
-            this.tdBadGuy.appendChild(character.UI.render());
-            return this;
+        GameUI.prototype.renderModalContent = function (hbTemplate, data) {
+            this.divModalContent.innerHTML = "";
+            this.divModalContent.appendChild(HBRender.renderTemplate(hbTemplate, data || {}));
         };
-        GameUI.prototype.renderCurrentWord = function (word) {
-            this.spanCurrentWord.innerHTML = (word.word + "<br/>" + word.usage);
-        };
-        GameUI.prototype.showCurrentWord = function (b) {
-            var $el = $(this.divCurrentWord);
+        GameUI.prototype.showModalWindow = function (b) {
+            var $el = $(this.divModalWindow);
             if (b) {
                 $el.show();
             }
             else {
                 $el.hide();
+            }
+        };
+        GameUI.prototype.showCurrentWord = function (b) {
+            if (b) {
+                this.showModalWindow(true);
+                this.renderModalContent(this.templateWordHintAndUsage, this.game);
+            }
+            else {
+                this.showModalWindow(false);
+                this.renderModalContent(this.templateWordHintAndUsage, {});
             }
         };
         GameUI.prototype.showShowCurrentWordButton = function (b) {
@@ -380,7 +408,6 @@ var UI;
             }
         };
         GameUI.prototype.resetForm = function () {
-            this.showShowCurrentWordButton(false);
             this.txtUserEntry.value = "";
         };
         GameUI.prototype.wireup = function () {
@@ -396,6 +423,8 @@ var UI;
                 _this.game.speakCurrentWordAndPhrase();
             };
             this.btnShowCurrentWord.onclick = function (e) {
+                // Set the game flag to indicate that the hint has been used
+                _this.game.HasUsedCurrentWordHint = true;
                 _this.showCurrentWord(true);
                 _this.game.speakCurrentWordAndPhrase();
                 // Hide after n seconds
@@ -406,15 +435,16 @@ var UI;
             };
             $(this.btnSubmitAnswer).on("click", function (e) {
                 var enteredWord = self.txtUserEntry.value;
-                var isCorrectWord = game.CurrentWord.word.toLowerCase() === enteredWord.toLowerCase();
+                var isCorrectWord = game.wordMatchesCurrentWord(enteredWord);
                 if (isCorrectWord) {
-                    game.BadGuy.currentHealth--;
-                    self.renderBadGuy(game.BadGuy);
+                    var cntDamage = self.game.HasUsedCurrentWordHint ? 1 : 2;
+                    self.game.reduceCharacterHealth(game.BadGuy, cntDamage);
+                    self.renderCharacter(game.BadGuy, self.tdBadGuy);
                     self.game.playCorrectAnswerSound();
                     self.game.speak("That's right!");
                     self.game.cycleToNextWord();
-                    self.renderCurrentWord(self.game.CurrentWord);
-                    self.el.querySelector("#CurrentWord").innerHTML = self.game.CurrentWord.word;
+                    self.showShowCurrentWordButton(true);
+                    self.game.HasUsedCurrentWordHint = false;
                     self.resetForm();
                     if (self.game.BadGuy.currentHealth !== 0) {
                         self.game.speak("The next word is ");
@@ -422,9 +452,9 @@ var UI;
                     }
                 }
                 else {
-                    game.GoodGuy.currentHealth--;
+                    self.game.reduceCharacterHealth(self.game.GoodGuy, 1);
                     self.showShowCurrentWordButton(true);
-                    self.renderGoodGuy(game.GoodGuy);
+                    self.renderCharacter(game.GoodGuy, self.tdGoodGuy);
                     self.game.playWrongAnswerSound();
                     self.game.speak("Try again!");
                     self.game.speak("The word is ");
@@ -437,8 +467,10 @@ var UI;
                     setTimeout(function () {
                         self.game.cycleToNextBadGuy();
                         self.game.speakCurrentBadGuyIntro();
-                        self.renderBadGuy(self.game.BadGuy);
+                        self.renderCharacter(self.game.BadGuy, self.tdBadGuy);
                         self.game.cycleToNextWord();
+                        self.showShowCurrentWordButton(true);
+                        self.game.HasUsedCurrentWordHint = false;
                         self.game.speak("The next word is ");
                         self.game.speakCurrentWordAndPhrase();
                     }, self.game.Settings.HintDuration);

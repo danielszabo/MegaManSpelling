@@ -5,8 +5,9 @@
 
     public tdGoodGuy          : HTMLTableCellElement;
     public tdBadGuy           : HTMLTableCellElement;
-    public divCurrentWord     : HTMLDivElement;
-    public spanCurrentWord    : HTMLSpanElement;
+
+    public divModalWindow     : HTMLDivElement;
+    public divModalContent    : HTMLDivElement;
 
     public btnShowCurrentWord : HTMLInputElement;
     public btnSayCurrentWord  : HTMLInputElement;
@@ -14,7 +15,12 @@
     public txtUserEntry       : HTMLInputElement;
 
     public template:string = `
-<div>
+<div style="position: relative">
+  <div id="ModalWindow" class='ModalContainer'>
+    <div class='ModalBG'></div>
+    <div id="ModalContent" class='ModalContent'></div>
+  </div>  
+  
   <table class='ArenaTable'>
     <tbody>
       <tr>
@@ -28,19 +34,24 @@
 
   <br/>
   <div class='textEntryArea'>
-    <div class="currentWordArea" id="DivCurrentWordArea" style='display:none'>
-      <span>Word</span>: <b><span id="CurrentWord">{{CurrentWord.word}}</span></b>
-    </div>
     <form>
       <input id="BtnSayCurrentWord" type="button" value="Repeat Word" /><br>
+      <input id="BtnShowCurrentWord" type="button" value="Show Hint" /><br>
       <input id="TextEntryInput" type="text" placeholder="Type your answer here" />
-      <input id="BtnShowCurrentWord" type="button" value="Show Word" />
       <br><br>
       <input id="BtnSubmitButton" type="button" value="FIRE" />
     </form>
   </div>
 </div>
 `;  
+    public templateWordHintAndUsage = `
+<div>
+  <div class="currentWordArea" id="DivCurrentWordArea">
+    <span>Word</span>: <b><span id="CurrentWord">{{CurrentWord.word}}</span></b><br>
+    Sentence: <span id="CurrentWordSentence">{{CurrentWord.usage}}</span><br>
+  </div>
+</div>
+`;
 
     constructor(arena:BO.Game){
       this.game = arena;
@@ -52,35 +63,41 @@
       this.el                 = HBRender.renderTemplate(this.template, game);
       this.tdGoodGuy          = <HTMLTableCellElement>this.el.querySelector("#GoodGuyCell");
       this.tdBadGuy           = <HTMLTableCellElement>this.el.querySelector("#BadGuyCell");
-      this.divCurrentWord     = <HTMLDivElement>this.el.querySelector("#DivCurrentWordArea");
-      this.spanCurrentWord    = <HTMLSpanElement>this.el.querySelector("#CurrentWord");
+      this.divModalWindow     = <HTMLDivElement>this.el.querySelector("#ModalWindow");
+      this.divModalContent    = <HTMLDivElement>this.el.querySelector("#ModalContent");
       this.btnShowCurrentWord = <HTMLInputElement>this.el.querySelector("#BtnShowCurrentWord");
       this.btnSayCurrentWord  = <HTMLInputElement>this.el.querySelector("#BtnSayCurrentWord");
       this.btnSubmitAnswer    = <HTMLInputElement>this.el.querySelector("#BtnSubmitButton");
       this.txtUserEntry       = <HTMLInputElement>this.el.querySelector("#TextEntryInput");
-      this.renderGoodGuy(game.GoodGuy);
-      this.renderBadGuy(game.BadGuy);
+      this.renderCharacter(game.GoodGuy, this.tdGoodGuy);
+      this.renderCharacter(game.BadGuy, this.tdBadGuy);
       
       this.resetForm();
       return this;
     }
-    renderGoodGuy(character:BO.Character):GameUI{
-      this.tdGoodGuy.innerHTML = "";
-      this.tdGoodGuy.appendChild(character.UI.render());
+    renderCharacter(character:BO.Character, td:HTMLTableCellElement):GameUI{
+      td.innerHTML = "";
+      td.appendChild(character.UI.render());
       return this;  
     }
-    renderBadGuy(character:BO.Character):GameUI{
-      this.tdBadGuy.innerHTML = "";
-      this.tdBadGuy.appendChild(character.UI.render());
-      return this;  
+    renderModalContent(hbTemplate:string, data){
+      this.divModalContent.innerHTML = "";
+      this.divModalContent.appendChild(
+        HBRender.renderTemplate(hbTemplate,data||{}));
     }
-    renderCurrentWord(word:BO.IWordBankEntry){
-      this.spanCurrentWord.innerHTML = (word.word + "<br/>" + word.usage);  
+    showModalWindow(b:boolean){
+      var $el = $(this.divModalWindow);
+      if (b) { $el.show(); }
+      else { $el.hide(); }
     }
     showCurrentWord(b:boolean){
-      var $el = $(this.divCurrentWord);
-      if ( b ){$el.show(); } 
-      else {$el.hide();}
+      if ( b ){
+        this.showModalWindow(true);
+        this.renderModalContent(this.templateWordHintAndUsage, this.game);
+      } else {
+        this.showModalWindow(false);
+        this.renderModalContent(this.templateWordHintAndUsage, {});  
+      }
     }
     showShowCurrentWordButton(b:boolean){
       var $el = $(this.btnShowCurrentWord);
@@ -88,7 +105,6 @@
       else { $el.hide(); }
     }
     resetForm(){
-      this.showShowCurrentWordButton(false);
       this.txtUserEntry.value = ""; 
     }
     
@@ -109,6 +125,8 @@
       };
 
       this.btnShowCurrentWord.onclick = (e) => {
+        // Set the game flag to indicate that the hint has been used
+        this.game.HasUsedCurrentWordHint = true;
         this.showCurrentWord(true);
         this.game.speakCurrentWordAndPhrase();
         
@@ -119,20 +137,22 @@
         }, this.game.Settings.HintDuration);
       }
 
-
+      
       $(this.btnSubmitAnswer).on("click", function (e) {
 
-        var enteredWord = self.txtUserEntry.value;
-        var isCorrectWord = game.CurrentWord.word.toLowerCase() === enteredWord.toLowerCase();
+        var enteredWord   = self.txtUserEntry.value;
+        var isCorrectWord = game.wordMatchesCurrentWord(enteredWord);
+        
         if (isCorrectWord) {
-          game.BadGuy.currentHealth--;
-          self.renderBadGuy(game.BadGuy);
+          var cntDamage = self.game.HasUsedCurrentWordHint ? 1 : 2;
+
+          self.game.reduceCharacterHealth(game.BadGuy, cntDamage);
+          self.renderCharacter(game.BadGuy, self.tdBadGuy);
           self.game.playCorrectAnswerSound();
           self.game.speak("That's right!");
           self.game.cycleToNextWord();
-          self.renderCurrentWord(self.game.CurrentWord);
-
-          (<HTMLSpanElement>self.el.querySelector("#CurrentWord")).innerHTML = self.game.CurrentWord.word;
+          self.showShowCurrentWordButton(true);
+          self.game.HasUsedCurrentWordHint = false;
           self.resetForm();
 
           if (self.game.BadGuy.currentHealth !== 0){
@@ -141,9 +161,9 @@
           }
         }
         else {
-          game.GoodGuy.currentHealth--;
+          self.game.reduceCharacterHealth(self.game.GoodGuy, 1);
           self.showShowCurrentWordButton(true);
-          self.renderGoodGuy(game.GoodGuy);
+          self.renderCharacter(game.GoodGuy, self.tdGoodGuy);
           self.game.playWrongAnswerSound();
           self.game.speak("Try again!");
           self.game.speak("The word is ");
@@ -157,8 +177,10 @@
           setTimeout(()=>{
             self.game.cycleToNextBadGuy();
             self.game.speakCurrentBadGuyIntro();
-            self.renderBadGuy(self.game.BadGuy);
+            self.renderCharacter(self.game.BadGuy, self.tdBadGuy);
             self.game.cycleToNextWord();
+            self.showShowCurrentWordButton(true);
+            self.game.HasUsedCurrentWordHint = false;
             self.game.speak("The next word is ");
             self.game.speakCurrentWordAndPhrase();
           }, self.game.Settings.HintDuration);

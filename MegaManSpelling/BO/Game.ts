@@ -1,20 +1,22 @@
 ﻿module BO{
   export class Game{
-    public CurrentWord : IWordBankEntry;
-    public Settings    : GameSettings
-    public GameVoice   : Voice;
-    public GoodGuy     : Character;
-    public BadGuy      : Character;
-    public UI          : UI.GameUI;
+    public HasUsedCurrentWordHint : boolean;
+    public CurrentWord            : IWordBankEntry;
+    public Settings               : GameSettings
+    public GameVoice              : Voice;
+    public GoodGuy                : Character;
+    public BadGuy                 : Character;
+    public UI                     : UI.GameUI;
   
     constructor(gameSettings: GameSettings, gameVoice: Voice, currentWord:IWordBankEntry, goodGuy: Character, badGuy: Character){
-      this.Settings    = gameSettings;
-      this.GameVoice   = gameVoice;
-      this.CurrentWord = currentWord;
-      this.GoodGuy     = goodGuy;
-      this.BadGuy      = badGuy;
+      this.HasUsedCurrentWordHint = false;
+      this.Settings               = gameSettings;
+      this.GameVoice              = gameVoice;
+      this.CurrentWord            = currentWord;
+      this.GoodGuy                = goodGuy;
+      this.BadGuy                 = badGuy;
 
-      this.UI        = new UI.GameUI(this);
+      this.UI                     = new UI.GameUI(this);
     }
 
     public start(): Game {
@@ -43,6 +45,29 @@
       this.BadGuy = roster.BadGuys[this.Settings.CurrentLevel];
     }
 
+    wordMatchesCurrentWord(s:string){
+      return s === this.CurrentWord.word;  
+    }
+
+    increaseCharacterHealth(char:Character, n:number){
+      char.currentHealth += n;
+      
+      // Don't let the character's health exceed it's max health
+      if ( char.currentHealth > char.maxHealth ){
+        char.currentHealth = char.maxHealth;  
+      }
+    }
+
+    reduceCharacterHealth(char:Character, n:number){
+      char.currentHealth -= n;
+
+      // Don't let the character's health counter fall below zero
+      if ( char.currentHealth < 0 ){
+        char.currentHealth = 0;  
+      }
+    }
+
+    reduceGoodGuyHealth
     
 
     speakCurrentWordAndPhrase() {
