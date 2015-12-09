@@ -23,7 +23,8 @@
       return this;
     }
 
-    /* Generates a new word for the user to guess and stores it in
+    /**
+     * Generates a new word for the user to guess and stores it in
      * the Game.CurrentWord field.
      * @method cycleToNextWord
      */
@@ -39,12 +40,21 @@
       this.CurrentWord = newWord;  
     }
 
+    /**
+     * Promotes the player to the next level and sets the bad guy to that level's bad guy
+     * @method cycleToNextBadGuy
+     */
     cycleToNextBadGuy(){
       var roster = new BO.Roster();
       this.Settings.CurrentLevel++;
       this.BadGuy = roster.BadGuys[this.Settings.CurrentLevel];
     }
 
+    /**
+     * Checks to see if a word matches the games's current selected word
+     * @method wordMatchesCurrentWord
+     * @param {string} s The word to check for a match against the games Current Word
+     */
     wordMatchesCurrentWord(s:string){
       return s === this.CurrentWord.word;  
     }

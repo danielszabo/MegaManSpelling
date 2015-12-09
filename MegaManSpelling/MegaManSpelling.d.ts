@@ -34,8 +34,22 @@ declare module BO {
         UI: UI.GameUI;
         constructor(gameSettings: GameSettings, gameVoice: Voice, currentWord: IWordBankEntry, goodGuy: Character, badGuy: Character);
         start(): Game;
+        /**
+         * Generates a new word for the user to guess and stores it in
+         * the Game.CurrentWord field.
+         * @method cycleToNextWord
+         */
         cycleToNextWord(): void;
+        /**
+         * Promotes the player to the next level and sets the bad guy to that level's bad guy
+         * @method cycleToNextBadGuy
+         */
         cycleToNextBadGuy(): void;
+        /**
+         * Checks to see if a word matches the games's current selected word
+         * @method wordMatchesCurrentWord
+         * @param {string} s The word to check for a match against the games Current Word
+         */
         wordMatchesCurrentWord(s: string): boolean;
         increaseCharacterHealth(char: Character, n: number): void;
         reduceCharacterHealth(char: Character, n: number): void;
