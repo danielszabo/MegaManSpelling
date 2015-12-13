@@ -233,6 +233,23 @@ var BO;
             var audio = new Audio('sounds/wronganswer.mp3');
             audio.play();
         };
+        Game.prototype.playExposionSound = function () {
+            var audio = new Audio('sounds/explosion.mp3');
+            audio.play();
+        };
+        Game.prototype.playEvilLaughter = function () {
+            var audio = new Audio('sounds/evillaugh.mp3');
+            audio.play();
+        };
+        Game.prototype.unlockSecretLevel = function () {
+            var AlexFighter = new BO.Character("Alexander The Great", "Images/Minions/SF2.gif", "Images/Portraits/AlexPortrait.png", 20, 20, 0, 0, 9, [
+                new BO.Minion("Minion1", "Images/minions/SFMinion1.gif", 9, 9, 1, true),
+                new BO.Minion("Minion2", "Images/minions/SFMinion2.gif", 9, 9, 1, true)]);
+            this.Roster.BadGuys.push(AlexFighter);
+            this.playExposionSound();
+            this.playEvilLaughter();
+            this.speak("You've unlocked the secret level!");
+        };
         return Game;
     })();
     BO.Game = Game;
@@ -927,6 +944,9 @@ var UI;
                 else {
                     self.game.speak("Mega Man Wins!");
                     setTimeout(function () {
+                        if (self.game.BadGuy === self.game.Roster.BadGuys[self.game.Roster.BadGuys.length - 1]) {
+                            self.game.unlockSecretLevel();
+                        }
                         self.game.cycleToNextBadGuy();
                         self.game.cycleToNextScene();
                         self.renderRoster();

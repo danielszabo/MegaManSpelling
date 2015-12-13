@@ -107,6 +107,9 @@ declare module BO {
         speakCurrentBadGuyIntro(): void;
         playCorrectAnswerSound(): void;
         playWrongAnswerSound(): void;
+        playExposionSound(): void;
+        playEvilLaughter(): void;
+        unlockSecretLevel(): void;
     }
 }
 declare module BO {

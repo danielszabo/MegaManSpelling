@@ -412,6 +412,12 @@
         else {
           self.game.speak("Mega Man Wins!");
           setTimeout(()=>{
+
+            if ( self.game.BadGuy === self.game.Roster.BadGuys[self.game.Roster.BadGuys.length -1] ){
+              self.game.unlockSecretLevel();  
+            }
+
+
             self.game.cycleToNextBadGuy();
             self.game.cycleToNextScene();
             self.renderRoster();
