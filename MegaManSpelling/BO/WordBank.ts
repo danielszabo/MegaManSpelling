@@ -25,14 +25,14 @@
       { word: "of",     accepts : ["of"],               usage: "In the nick of time" },
       { word: "off",    accepts : ["off"],              usage: "The boy asked his sister to get off him" },
       { word: "one",    accepts : ["one", "won"],       usage: "The boy counted one two three!" },
-      { word: "red",    accepts : ["red"],              usage: "The girl likes the color red" },
-      { word: "she",    accepts : ["she"],              usage: "The girl asked if she could play with the toy" },
-      { word: "that",   accepts : ["that"],             usage: "The boy said he likes that toy very much" },
-      { word: "the",    accepts : ["the"],              usage: "The boy asked the little girl about the toy" },
+      { word: "red",    accepts : ["red"],              usage: "My favorite color is red" },
+      { word: "she",    accepts : ["she"],              usage: "She asked if she could play with the toy" },
+      { word: "that",   accepts : ["that"],             usage: "The boy likes that toy very much" },
+      { word: "the",    accepts : ["the"],              usage: "The boy played with the toy" },
       { word: "them",   accepts : ["them"],             usage: "The boy said he wants to play with them" },
       { word: "was",    accepts : ["was"],              usage: "The boy was at the store with his mother" },
       { word: "where",  accepts : ["where"],            usage: "The boy wanted to know where his mother was going" },
-      { word: "with",   accepts : ["with"],             usage: "The boy wanted to know if he could go with his mother" },
+      { word: "with",   accepts : ["with"],             usage: "The boy wanted to go with his mother" },
       { word: "you",    accepts : ["you"],              usage: "The boy told his mother I love you!" }];
 
     public Level2Words: Array<IWordBankEntry> = [
@@ -45,7 +45,7 @@
       { word: "bird",      accepts: ["bir"],       usage: "A bird sits in the banana tree." },
       { word: "blue",      accepts: ["blue"],      usage: "A blue bird sits in the banana tree." },
       { word: "easy",      accepts: ["easy"],      usage: "Spelling is almost too easy for Kaleb." },
-      { word: "curious",   accepts: ["curious"],   usage: "George was good little and always very curious." },
+      { word: "curious",   accepts: ["curious"],   usage: "George was a good little monkey and always very curious." },
       { word: "corn",      accepts: ["corn"],      usage: "Corn on the cobb is tasty." },
       { word: "hide",      accepts: ["hide"],      usage: "Hide and seek is a fun game." },
       { word: "funny",     accepts: ["funny"],     usage: "The minions are really funny little yellow guys." },
@@ -81,55 +81,80 @@
       { word: "wash",      accepts: ["wash"],      usage: "Mommy always makes us wash our hands." },
       { word: "yellow",    accepts: ["yell"],      usage: "George was friends with the man in the yellow hat." }];
 
-    public Level3Words:Array<string> = [
-      "above", 
-      "batch",
-      "beat", 
-      "bowl", 
-      "catch", 
-      "chain", 
-      "chat", 
-      "chicken", 
-      "chill", 
-      "chin", 
-      "church", 
-      "cracker", 
-      "grape", 
-      "grease", 
-      "high", 
-      "jelly", 
-      "juice", 
-      "match",
-      "matches", 
-      "orange",
-      "pitch", 
-      "pitch", 
-      "pitcher", 
-      "potato", 
-      "purple", 
-      "sick", 
-      "soda", 
-      "steam", 
-      "switch", 
-      "team", 
-      "tease", 
-      "thanks", 
-      "treat", 
-      "under", 
-      "watch", 
-      "watches", 
-      "watermelon", 
-      "welcome"];
+    public Level3Words: Array<IWordBankEntry> = [
+      { word: "above",      accepts: ["above"],      usage: "Planes fly above you in the sky." },
+      { word: "batch",      accepts: ["batch"],      usage: "The farmer harvested a batch of potatos"},
+      { word: "beat",       accepts: ["beat"],       usage: "The winning team beat the losing team." },
+      { word: "bowl",       accepts: ["bowl"],       usage: "Daddy makes Kaleb a bowl of oatmeal for breakfast" },
+      { word: "catch",      accepts: ["catch"],      usage: "Daddy likes to play catch with Kaleb." },
+      { word: "chain",      accepts: ["chain"],      usage: "The dog was tied to the doghouse with a chain." },
+      { word: "chat",       accepts: ["chat"],       usage: "Kaleb likes to chat a lot before bedtime." },
+      { word: "chicken",    accepts: ["chicken"],    usage: "The farmer feeds his chickens every morning." },
+      { word: "chill",      accepts: ["chill"],      usage: "Mommy told Zoe to chill out." },
+      { word: "chin",       accepts: ["chin"],       usage: "Kaleb punched daddy in the chin when they were wrestling." },
+      { word: "church",     accepts: ["church"],     usage: "People go to church to pray." },
+      { word: "cracker",    accepts: ["cracker"],    usage: "Kaleb likes to put cheese on his crackers." },
+      { word: "grape",      accepts: ["grape"],      usage: "Zoe loves to eat grapes!" },
+      { word: "grease",     accepts: ["grease"],     usage: "There was a lot of grease on the stove after daddy made dinner." },
+      { word: "high",       accepts: ["high"],       usage: "Planes fly high up in the sky!" },
+      { word: "jelly",      accepts: ["jelly"],      usage: "Zoe loves peanut butter and jelly sandwiches." },
+      { word: "juice",      accepts: ["juice"],      usage: "Zoe loves juice mixed into her water." },
+      { word: "match",      accepts: ["match"],      usage: "Kaleb and daddy had a wrestling match." },
+      { word: "matches",    accepts: ["matches"],    usage: "Playing with matches is dangerous!" },
+      { word: "orange",     accepts: ["orange"],     usage: "Kaleb had an orange in his lunch." },
+      { word: "pitch",      accepts: ["pitch"],      usage: "Kaleb likes to pitch when he plays baseball." },
+      { word: "pitcher",    accepts: ["pitcher"],    usage: "Kaleb could be a pitcher on a baseball team" },
+      { word: "potato",     accepts: ["potato"],     usage: "The farmer only grew one potato this year. It'll be a hard winter." },
+      { word: "purple",     accepts: ["purple"],     usage: "Barney is a big purple dinosaur!" },
+      { word: "sick",       accepts: ["sick"],       usage: "When little boys don't wash their hands they usually get sick." },
+      { word: "soda",       accepts: ["soda"],       usage: "Kaleb tried to sneak a sip of daddy's soda pop." },
+      { word: "steam",      accepts: ["steam"],      usage: "Some trains used to run on steam. They were called steam engines!" },
+      { word: "switch",     accepts: ["switch"],     usage: "The train passenger asked if he could switch to a window seat." },
+      { word: "team",       accepts: ["team"],       usage: "Should we sign Kaleb up to play for a soccer team?" },
+      { word: "tease",      accepts: ["tease"],      usage: "Its not nice to tease other kids at school." },
+      { word: "thanks",     accepts: ["thanks"],     usage: "Kaleb said thanks for the snack!" },
+      { word: "treat",      accepts: ["treat"],      usage: "If Kaleb is a good boy sometimes he gets a treat." },
+      { word: "under",      accepts: ["under"],      usage: "Maybe the toy is under the couch!" },
+      { word: "watch",      accepts: ["watch"],      usage: "Zoe likes to wake up and watch Daniel Tiger." },
+      { word: "watches",    accepts: ["watches"],    usage: "A watch collector has lots of watches." },
+      { word: "watermelon", accepts: ["watermelon"], usage: "Watermelon is one of daddy's favorite foods!" },
+      { word: "welcome",    accepts : ["welcome"],    usage: "When someone says thank you its nice to respond with Your Welcome!"}];
   }
   
   export class WordSelector{
     
-    chooseRandomWordFromBank(bank:Array<IWordBankEntry>):IWordBankEntry{
-      var min  = 0;
-      var max  = bank.length - 1;
+    WordBank : WordBank = new WordBank();
+
+    chooseRandomWordFromBank(level:number):IWordBankEntry{
+      var min  = 0,
+          wordlist: Array<IWordBankEntry> = null;
+      
+      
+      wordlist = (level == 1) ? this.WordBank.Level1Words 
+                  : (level === 2) ? this.WordBank.Level2Words
+                    : (level === 3) ? this.WordBank.Level3Words 
+                      : this.WordBank.Level1Words;
+     
+
+      var max  = wordlist.length - 1;
       var rand = Math.floor(Math.random() * (max - min + 1)) + min;
       
-      return bank[rand];
+      return wordlist[rand];
+    }
+
+    getListOfWordsAtLevel(level:number):Array<string>{
+      var results:Array<string>;
+      var wordlist:Array<IWordBankEntry>;
+      wordlist = (level == 1) ? this.WordBank.Level1Words
+        : (level === 2) ? this.WordBank.Level2Words
+          : (level === 3) ? this.WordBank.Level3Words
+            : this.WordBank.Level1Words;
+      
+      results = wordlist.map(function(iwe){
+        return iwe.word;
+      });
+
+      return results.sort();
     }
   } 
 } 

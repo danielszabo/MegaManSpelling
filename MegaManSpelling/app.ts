@@ -24,22 +24,31 @@ class GameLauncher{
   constructor(){}  
   launch(){
 
-    var gameSettings = new BO.GameSettings();
-    var voice        = new BO.Voice();
-    var roster       = new BO.Roster();
-    var goodGuy      = new BO.Character("MegaMan", "Images/MegaMan.png", 10, 10, 1);
-    var badGuy       = roster.BadGuys[gameSettings.CurrentLevel];
-    var currentWord  = new BO.WordSelector().chooseRandomWordFromBank(
-      new BO.WordBank().Level2Words);
-    var game         = new BO.Game(gameSettings, voice, currentWord, goodGuy, badGuy);
+    var gameSettings       = new BO.GameSettings();
+    var voice              = new BO.Voice();
+    var roster             = new BO.Roster();
+    var goodGuy            = roster.GoodGuys[0];
+    var badGuy             = roster.BadGuys[gameSettings.CurrentLevel];
+    var wordSelector       = new BO.WordSelector();
+    var currentWord        = wordSelector.chooseRandomWordFromBank( gameSettings.CurrentLevel );
+    var mathSelector       = new BO.MathProblemSelector();
+    var currentMathProblem = mathSelector.chooseRandomExpressionFromBank(gameSettings.CurrentLevel);
+    var sceneSelector      = new BO.SceneSelector();
+    var currentScene       = sceneSelector.chooseRandomSceneFromBank();
+    var game               = new BO.Game( gameSettings, 
+                                          voice, 
+                                          currentWord, 
+                                          wordSelector, 
+                                          currentMathProblem, 
+                                          mathSelector, 
+                                          goodGuy, 
+                                          badGuy, 
+                                          roster,
+                                          currentScene,
+                                          sceneSelector);
 
     document.getElementById("content").appendChild(game.UI.el);
 
-
-    var roster = new BO.Roster();
-    document.body.appendChild(roster.UI.el);
-
-    
     window["game"] = game;
   }
 }

@@ -17,6 +17,22 @@ class HBRender {
       strHtml += "</div>";
       return new Handlebars.SafeString(strHtml);
     });
+
+    Handlebars.registerHelper('renderCharacterPowerups', function (currentPowerups, maxPowerups) {
+      var strHtml = "<div>";
+      
+      for (var i = 0; i < maxPowerups; i++) {
+
+        strHtml += "<div class='characterPowerupBlock ";
+
+        if (i < currentPowerups) { strHtml += "full"; }
+        else { strHtml += "empty"; }
+
+        strHtml += "'></div>";
+      }
+      strHtml += "</div>";
+      return new Handlebars.SafeString(strHtml);
+    });
   }
 
   public static renderTemplate(sourceHtml: string, viewModel: any): HTMLElement {

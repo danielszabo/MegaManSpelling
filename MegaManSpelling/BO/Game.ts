@@ -1,20 +1,33 @@
 ﻿module BO{
   export class Game{
     public HasUsedCurrentWordHint : boolean;
+    public CurrentTarget          : BO.IDamageable;
     public CurrentWord            : IWordBankEntry;
+    public WordSelector           : WordSelector;
+    public CurrentMathProblem     : IMathProblemEntry;
+    public MathProblemSelector    : MathProblemSelector;
+    public CurrentScene           : IScene;
+    public SceneSelector          : SceneSelector;
     public Settings               : GameSettings
     public GameVoice              : Voice;
     public GoodGuy                : Character;
     public BadGuy                 : Character;
+    public Roster                 : Roster;
     public UI                     : UI.GameUI;
   
-    constructor(gameSettings: GameSettings, gameVoice: Voice, currentWord:IWordBankEntry, goodGuy: Character, badGuy: Character){
+    constructor(gameSettings: GameSettings, gameVoice: Voice, currentWord: IWordBankEntry, wordSelector: WordSelector, currentMathProblem: IMathProblemEntry, mathProblemSelector: MathProblemSelector, goodGuy: Character, badGuy: Character, roster: Roster, currentScene: IScene, sceneSelector: SceneSelector){
       this.HasUsedCurrentWordHint = false;
       this.Settings               = gameSettings;
       this.GameVoice              = gameVoice;
       this.CurrentWord            = currentWord;
+      this.WordSelector           = wordSelector;
+      this.CurrentMathProblem     = currentMathProblem;
+      this.MathProblemSelector    = mathProblemSelector;
       this.GoodGuy                = goodGuy;
       this.BadGuy                 = badGuy;
+      this.Roster                 = roster;
+      this.CurrentScene           = currentScene;
+      this.SceneSelector          = sceneSelector
 
       this.UI                     = new UI.GameUI(this);
     }
@@ -29,8 +42,8 @@
      * @method cycleToNextWord
      */
     cycleToNextWord(){
-      var newWord = new BO.WordSelector().chooseRandomWordFromBank(
-        new BO.WordBank().Level1Words);
+      var newWord = this.WordSelector.chooseRandomWordFromBank(
+        this.Settings.CurrentLevel);
 
       if ( newWord.word.toUpperCase() === this.CurrentWord.word.toUpperCase() ) {
         this.cycleToNextWord();
@@ -41,13 +54,51 @@
     }
 
     /**
+     * Generates a new math problem for the user to guess and stores it in
+     * the Game.CurrentMathProblem field
+     */
+    cycleToNextMathProblem(){
+      var newMathProblem = this.MathProblemSelector.chooseRandomExpressionFromBank(
+        this.Settings.CurrentLevel);
+
+      if ( newMathProblem.expression == this.CurrentMathProblem.expression ){
+        this.cycleToNextMathProblem();
+        return;  
+      }
+
+      this.CurrentMathProblem = newMathProblem;
+    }
+
+    /**
+     * Generates a new scene (bg, music, etc.)
+     */
+    cycleToNextScene() {
+      var newScene = this.SceneSelector.chooseRandomSceneFromBank();
+
+      if (newScene.name === this.CurrentScene.name){
+        this.cycleToNextScene();
+        return;
+      }
+
+      this.CurrentScene = newScene;
+    }
+
+    /**
      * Promotes the player to the next level and sets the bad guy to that level's bad guy
      * @method cycleToNextBadGuy
      */
     cycleToNextBadGuy(){
-      var roster = new BO.Roster();
       this.Settings.CurrentLevel++;
-      this.BadGuy = roster.BadGuys[this.Settings.CurrentLevel];
+      this.BadGuy = this.Roster.BadGuys[this.Settings.CurrentLevel];
+    }
+
+    /**
+     * Promotes the player to the next level and sets the bad guy to that level's bad guy
+     * @method cycleToNextBadGuy
+     */
+    cycleToPreviousBadGuy() {
+      this.Settings.CurrentLevel--;
+      this.BadGuy = this.Roster.BadGuys[this.Settings.CurrentLevel];
     }
 
     /**
@@ -55,11 +106,44 @@
      * @method wordMatchesCurrentWord
      * @param {string} s The word to check for a match against the games Current Word
      */
-    wordMatchesCurrentWord(s:string){
-      return s === this.CurrentWord.word;  
+    checkWordMatchesCurrentWord(s:string):boolean{
+      s = s.toLowerCase();
+      return (this.CurrentWord.accepts.indexOf( s.trim() ) > -1 );
     }
 
-    increaseCharacterHealth(char:Character, n:number){
+    /**
+     * Checks to see if the bad guy and all of his minions health
+     * are all at zero.
+     * @method checkAllEnemiesOnLevelAreDefeated
+     * @returns {boolean} True if all enemies are defeated, false otherwise.
+     */
+    checkAllEnemiesOnLevelAreDefeated():boolean{
+      var allDeadFlag = true;
+      if (this.BadGuy.currentHealth === 0) {
+        var minions = this.BadGuy.minions;
+        for (var i = 0; i < minions.length; i++) {
+          if (minions[i].currentHealth > 0) {
+            allDeadFlag = false;
+            break;
+          }
+        }
+      } else {
+        allDeadFlag = false;
+      }
+
+      return allDeadFlag;  
+    }
+
+    /**
+     * Checks to see if a number is the solution to the game's current math problem
+     * @method numberMatchesCurrentMathProblemAnswer
+     * @param {number} n The guess/answer to the game's current Math Problem
+     */
+    numberMatchesCurrentMathProblemAnswer(n:number){
+      return (this.CurrentMathProblem.accepts.indexOf(n) > -1)
+    }
+
+    increaseCharacterHealth(char:IDamageable, n:number){
       char.currentHealth += n;
       
       // Don't let the character's health exceed it's max health
@@ -68,7 +152,7 @@
       }
     }
 
-    reduceCharacterHealth(char:Character, n:number){
+    reduceCharacterHealth(char:IDamageable, n:number){
       char.currentHealth -= n;
 
       // Don't let the character's health counter fall below zero
@@ -77,7 +161,23 @@
       }
     }
 
-    reduceGoodGuyHealth
+    increaseCharacterPowerups(char:Character, n:number){
+      char.currentPowerups += n;
+
+      // Don't let the characters powerup count exceed its max allowable amount
+      if ( char.currentPowerups > char.maxPowerups ) {
+        char.currentPowerups = char.maxPowerups;  
+      }
+    }
+
+    decreaseCharacterPowerups(char: Character, n: number) {
+      char.currentPowerups -= n;
+
+      // Don't let the characters powerup count fall below zero
+      if (char.currentPowerups < 0) {
+        char.currentPowerups = 0;
+      }
+    }
     
 
     speakCurrentWordAndPhrase() {
