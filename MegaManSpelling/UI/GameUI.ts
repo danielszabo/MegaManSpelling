@@ -142,7 +142,7 @@
         this.divAdminPanel.style.left = "0";  
       }
       else {
-        this.divAdminPanel.style.left = '-25%';  
+        this.divAdminPanel.style.left = '0';  
       }
     }
 
@@ -414,7 +414,7 @@
           setTimeout(()=>{
 
             if ( self.game.BadGuy === self.game.Roster.BadGuys[self.game.Roster.BadGuys.length -1] ){
-              self.game.unlockSecretLevel();  
+              self.game.unlockSecretLevels();  
             }
 
 
@@ -422,6 +422,7 @@
             self.game.cycleToNextScene();
             self.renderRoster();
             self.renderScene(self.game.CurrentScene);
+            self.renderWordListing(this.game.WordSelector.getListOfWordsAtLevel(this.game.Settings.CurrentLevel));
             self.game.speakCurrentBadGuyIntro();
             self.renderBadGuy();
             self.game.cycleToNextWord();

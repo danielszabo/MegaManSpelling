@@ -109,7 +109,7 @@ declare module BO {
         playWrongAnswerSound(): void;
         playExposionSound(): void;
         playEvilLaughter(): void;
-        unlockSecretLevel(): void;
+        unlockSecretLevels(): void;
     }
 }
 declare module BO {
@@ -160,6 +160,7 @@ declare module BO {
     class Roster {
         GoodGuys: Array<Character>;
         BadGuys: Array<Character>;
+        SecretCharacters: Array<Character>;
         UI: UI.RosterUI;
         constructor();
     }
@@ -197,10 +198,12 @@ declare module BO {
         Level1Words: Array<IWordBankEntry>;
         Level2Words: Array<IWordBankEntry>;
         Level3Words: Array<IWordBankEntry>;
+        Level4Words: Array<IWordBankEntry>;
     }
     class WordSelector {
         WordBank: WordBank;
         chooseRandomWordFromBank(level: number): IWordBankEntry;
+        getWordListAtLevel(level: number): Array<IWordBankEntry>;
         getListOfWordsAtLevel(level: number): Array<string>;
     }
 }

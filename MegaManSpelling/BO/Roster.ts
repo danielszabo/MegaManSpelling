@@ -2,8 +2,8 @@
   export class Roster{
     
     public GoodGuys:Array<Character> = [
-      new BO.Character("MegaMan", "Images/MegaMan.png", "Images/portraits/MegaManPortrait.png", 10, 10, 3, 3, 1,[
-        /** /new Minion("Minion1", "Images/minions/MegaManMinion1.gif", 1, 1, 1, true),
+      new BO.Character("MegaMan", "Images/MegaMan.png", "Images/portraits/MegaManPortrait.png", 10, 10, 5, 5, 1,[
+        /**/new Minion("Minion1", "Images/minions/MegaManMinion1.gif", 1, 1, 1, true),
         new Minion("Minion1", "Images/minions/MegaManMinion2.gif", 1, 1, 1, false),
         new Minion("Minion1", "Images/minions/MegaManMinion3.gif", 1, 1, 1, true),
         new Minion("Minion1", "Images/minions/MegaManMinion4.gif", 1, 1, 1, true),
@@ -47,6 +47,24 @@
         new Minion("Minion1", "Images/minions/DragonManMinion1.gif", 2, 2, 1, false),
         new Minion("Minion1", "Images/minions/DragonManMinion2.gif", 2, 2, 1, false)])];  
     
+
+    public SecretCharacters: Array<Character> = [
+      new Character("Alex", "Images/SFAlex.gif", "Images/portraits/SFAlexPortrait.png", 3, 3, 0, 0, 0, [
+        new Minion("Minion1", "Images/minions/SFAlexMinion1.gif", 1, 1, 1, true),
+        new Minion("Minion2", "Images/minions/SFAlexMinion2.gif", 2, 2, 1, true)]),
+      new Character("Ken", "Images/SFChunLi.gif", "Images/portraits/SFChunLi.png", 4, 4, 0, 0, 1, [
+        new Minion("Minion1", "Images/minions/SFKenMinion1.gif", 3, 3, 1, false)]),
+      new Character("Kuma", "Images/SFKuma.gif", "Images/portraits/SFKumaPortrait.png", 5, 5, 0, 0, 2, [
+        new Minion("Minion1", "Images/minions/SFKumaMinion1.gif", 1, 1, 1, false),
+        new Minion("Minion1", "Images/minions/SFKumaMinion1.gif", 2, 2, 1, false)]),
+      new Character("Sagat", "Images/SFSagat.gif", "Images/portraits/SFSagatPortrait.png", 6, 6, 0, 0, 3, [
+        new Minion("Minion1", "Images/minions/SFZangiefMinion1.gif", 5, 5, 1, false)]),
+      new Character("Vega", "Images/SFVega.gif", "Images/portraits/SFVegaPortrait.png", 6, 6, 0, 0, 4, [
+        new Minion("Minion1", "Images/minions/SFVegaMinion1.gif", 3, 3, 1, true)]),
+      new Character("Ryu", "Images/SFRyu.gif", "Images/portraits/SFRyuPortrait.png", 8, 8, 0, 0, 5, [
+        new Minion("Minion1", "Images/minions/SFRyuMinion1.gif", 2, 2, 1, true),
+        new Minion("Minion1", "Images/minions/SFRyuMinion1.gif", 2, 2, 1, true),
+        new Minion("Minion2", "Images/minions/SFRyuMinion1.gif", 2, 2, 1, true)])];
       
     public UI : UI.RosterUI;
 
